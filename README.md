@@ -1,0 +1,2 @@
+# nbs-node
+Full node

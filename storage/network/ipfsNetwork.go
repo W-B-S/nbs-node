@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/libp2p/go-libp2p"
-	"gx/ipfs/QmNmJZL7FQySMtE2BQuLMuZg2EB2CLEunJJUSVSc9YnnbV/go-libp2p-host"
+	"github.com/libp2p/go-libp2p-host"
 	"sync"
 )
 
@@ -16,13 +16,14 @@ func GetInstance() host.Host {
 
 	once.Do(func() {
 		Context = context.Background()
-		host, err := libp2p.New(Context)
+		newHost, err := libp2p.New(Context)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Create host  %s\n", host.ID())
+		fmt.Printf("Create host  %s\n", newHost.ID())
 
-		p2pHost = host
+		//--->convert gx version control to github one's
+		p2pHost = newHost.(host.Host)
 	})
 
 	return p2pHost

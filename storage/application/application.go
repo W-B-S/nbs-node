@@ -40,6 +40,6 @@ func newApplication() (*NbsApplication, error) {
 	return &NbsApplication{}, nil
 }
 
-func (*NbsApplication) addFile(file os.File) error {
+func (*NbsApplication) AddFile(file *os.File) error {
 	return nil
 }

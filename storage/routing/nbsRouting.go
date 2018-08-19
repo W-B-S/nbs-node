@@ -20,7 +20,7 @@ var parentContext context.Context
 func GetInstance() *NbsDHT {
 	once.Do(func() {
 		parentContext = context.Background()
-		router, err := NewNbsDht()
+		router, err := newNbsDht()
 		if err != nil {
 			panic(err)
 		}
@@ -31,7 +31,7 @@ func GetInstance() *NbsDHT {
 	return instance
 }
 
-func NewNbsDht() (*NbsDHT, error) {
+func newNbsDht() (*NbsDHT, error) {
 
 	host := network.GetInstance()
 

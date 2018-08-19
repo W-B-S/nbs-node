@@ -1,7 +1,6 @@
 package nbslog
 
 import (
-	"fmt"
 	"github.com/op/go-logging"
 	"os"
 	"sync"
@@ -27,18 +26,24 @@ func newLogIns() *logging.Logger {
 	logFile, err := os.OpenFile("nbs.log",
 		os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	fileBackend := logging.NewLogBackend(logFile, ">>>", 0)
-	leveledFileBackend := logging.AddModuleLevel(fileBackend)
+
+	fileFormat := logging.MustStringFormatter(
+		`{time:01-02/15:04:05} %{longfunc} > %{level:.4s} %{message}<<< `,
+	)
+	fileFormatBackend := logging.NewBackendFormatter(fileBackend, fileFormat)
+
+	leveledFileBackend := logging.AddModuleLevel(fileFormatBackend)
 	leveledFileBackend.SetLevel(logging.DEBUG, "")
 
-	cmdBackend := logging.NewLogBackend(os.Stderr, ">>>", 0)
-	format := logging.MustStringFormatter(
+	cmdFormat := logging.MustStringFormatter(
 		`%{color}%{time:01-02/15:04:05} %{longfunc} > %{level:.4s} %{message}%{color:reset}  <<< `,
 	)
-	formattedCmdBackend := logging.NewBackendFormatter(cmdBackend, format)
+	cmdBackend := logging.NewLogBackend(os.Stderr, ">>>", 0)
+	formattedCmdBackend := logging.NewBackendFormatter(cmdBackend, cmdFormat)
 
 	logging.SetBackend(leveledFileBackend, formattedCmdBackend)
 

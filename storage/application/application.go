@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-type application interface {
+type Application interface {
 	addFile(file os.File) error
 }
 
@@ -38,4 +38,8 @@ func GetInstance() *NbsApplication {
 
 func newApplication() (*NbsApplication, error) {
 	return &NbsApplication{}, nil
+}
+
+func (*NbsApplication) addFile(file os.File) error {
+	return nil
 }

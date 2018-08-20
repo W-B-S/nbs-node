@@ -108,6 +108,8 @@ func Execute() {
 
 func mainRun(cmd *cobra.Command, args []string) {
 
+	logger.Info("root command args:", args)
+
 	StartCmdService()
 
 	logger.Info("Nbs daemon is ready......")

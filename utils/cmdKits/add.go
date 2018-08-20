@@ -1,9 +1,7 @@
 package cmdKits
 
 import (
-	"github.com/W-B-S/nbs-node/storage/application"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func init() {
@@ -19,19 +17,22 @@ var addCmd = &cobra.Command{
 
 func addFile(cmd *cobra.Command, args []string) {
 
-	DialToCmdService()
+	logger.Info("add command args:", args)
 
-	app := application.GetInstance()
+	DialToCmdService("nbs add nbs.log\n")
 
-	file, err := os.Open(args[0])
-	if err != nil {
-		logger.Fatal("Failed to open file.")
-		return
-	}
+	logger.Info("Reading success......")
 
-	app.AddFile(file)
 }
 
-func test() {
-
+func addFileTask(fileName string) {
+	//app := application.GetInstance()
+	//
+	//file, err := os.Open(fileName)
+	//if err != nil {
+	//	logger.Error("Failed to open file.")
+	//	return
+	//}
+	//
+	//app.AddFile(file)
 }

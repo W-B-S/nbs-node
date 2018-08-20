@@ -1,6 +1,7 @@
 package nbsLog
 
 import (
+	"github.com/W-B-S/nbs-node/utils/config"
 	"github.com/op/go-logging"
 	"os"
 	"sync"
@@ -23,8 +24,9 @@ func newLogIns() *logging.Logger {
 
 	log := logging.MustGetLogger("NBS")
 
-	logFile, err := os.OpenFile("nbs.log",
+	logFile, err := os.OpenFile(config.GetConfig().LogFileName,
 		os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+
 	if err != nil {
 		panic(err)
 	}

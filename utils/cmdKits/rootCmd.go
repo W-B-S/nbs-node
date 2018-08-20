@@ -87,7 +87,7 @@ This is deprecated. It is still honored in this version, but will be removed
 in a future version, along with this notice. Please move to setting the HTTP
 Headers.
 `
-
+var logger = nbsLog.GetInstance()
 var rootCmd = &cobra.Command{
 	Use: "nbs",
 
@@ -95,15 +95,20 @@ var rootCmd = &cobra.Command{
 
 	Long: nbsUsage,
 
-	Run: func(cmd *cobra.Command, args []string) {
-		logger := nbsLog.GetInstance()
-		logger.Warning("这是一次命令行测试")
-	},
+	Run: mainRun,
 }
 
 func Execute() {
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func mainRun(cmd *cobra.Command, args []string) {
+
+	StartCmdService()
+
+	logger.Info("Nbs daemon is ready......")
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/W-B-S/nbs-node/storage/routing"
 	"github.com/W-B-S/nbs-node/utils/cmdKits"
 )
 
@@ -11,6 +10,6 @@ func main() {
 
 	//nbslog.Test()
 
-	router := routing.GetInstance()
-	router.Run()
+	//router := routing.GetInstance()
+	//router.Run()
 }

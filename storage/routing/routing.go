@@ -14,4 +14,6 @@ type Routing interface {
 	PutValue(context.Context, string, []byte) error
 
 	GetValue(context.Context, string) ([]byte, error)
+
+	Run()
 }

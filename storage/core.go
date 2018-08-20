@@ -1,5 +1,5 @@
 package storage
 
-type Node struct {
+type NbsNode struct {
 	nodeId string
 }

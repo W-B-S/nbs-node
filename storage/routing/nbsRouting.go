@@ -17,7 +17,7 @@ var instance *NbsDHT
 var once sync.Once
 var parentContext context.Context
 
-func GetInstance() *NbsDHT {
+func GetInstance() Routing {
 	once.Do(func() {
 		parentContext = context.Background()
 		router, err := newNbsDht()
@@ -33,10 +33,10 @@ func GetInstance() *NbsDHT {
 
 func newNbsDht() (*NbsDHT, error) {
 
-	host := network.GetInstance()
+	network := network.GetInstance()
 
 	distributeTable := &NbsDHT{
-		peerId: peer.ID(host.ID()),
+		peerId: peer.ID(network.GetId()),
 	}
 
 	return distributeTable, nil
@@ -59,8 +59,7 @@ func (*NbsDHT) GetValue(context.Context, string) ([]byte, error) {
 	return nil, nil
 }
 
-//-----------> nbs distributed hash table functions<-----------//
-func (router *NbsDHT) Running() {
+func (router *NbsDHT) Run() {
 
 	select {
 	case <-parentContext.Done():

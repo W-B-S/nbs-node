@@ -2,7 +2,7 @@ package cmdKits
 
 import (
 	"fmt"
-	"github.com/W-B-S/nbs-node/utils/nbslog"
+	"github.com/W-B-S/nbs-node/utils/nbsLog"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -96,7 +96,7 @@ var rootCmd = &cobra.Command{
 	Long: nbsUsage,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		logger := nbslog.GetInstance()
+		logger := nbsLog.GetInstance()
 		logger.Warning("这是一次命令行测试")
 	},
 }

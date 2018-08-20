@@ -1,4 +1,4 @@
-package nbslog
+package nbsLog
 
 import (
 	"github.com/op/go-logging"

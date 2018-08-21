@@ -1,86 +1,113 @@
 package cmdRpc
 
 import (
-	"bufio"
 	"github.com/W-B-S/nbs-node/utils/config"
 	"github.com/W-B-S/nbs-node/utils/nbsLog"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+	"log"
 	"net"
+	"time"
 )
 
 var logger = nbsLog.GetInstance()
 
-func readFromRPC(connection net.Conn) (string, error) {
-	return bufio.NewReader(connection).ReadString('\n')
+type server struct{}
+
+func (s *server) RpcTask(ctx context.Context, req *CmdRequest) (*CmdReply, error) {
+	return handleInputCmd(ctx, req)
 }
 
 func DialToCmdService(cmdStr string) string {
+
 	var address = "127.0.0.1:" + config.GetConfig().CmdServicePort
 
-	logger.Info("Start to dial address:", address)
-
-	connection, err := net.Dial("tcp", address)
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		logger.Fatal("The nbs daemon is not running.")
+		logger.Fatalf("did not connect: %v", err)
 	}
+	defer conn.Close()
+	client := NewCmdTaskClient(conn)
 
-	defer connection.Close()
-	logger.Info("Dial server success......")
-
-	_, err = connection.Write([]byte(cmdStr))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	response, err := client.RpcTask(ctx, &CmdRequest{Name: "add"})
 	if err != nil {
-		logger.Fatal("Send command to nbs node failed.")
+		log.Fatalf("could not greet: %v", err)
 	}
-	logger.Info("Write request success......")
+	logger.Info("Greeting: %s", response.Message)
 
-	result, err := readFromRPC(connection)
-	if err != nil {
-		return err.Error()
-	} else {
-		return result
-	}
+	return response.Message
+	/*
+
+
+		logger.Info("Start to dial address:", address)
+
+		connection, err := net.Dial("tcp", address)
+		if err != nil {
+			logger.Fatal("The nbs daemon is not running.")
+		}
+
+		defer connection.Close()
+		logger.Info("Dial server success......")
+
+		_, err = connection.Write([]byte(cmdStr))
+		if err != nil {
+			logger.Fatal("Send command to nbs node failed.")
+		}
+		logger.Info("Write request success......")
+
+		result, err := readFromRPC(connection)
+		if err != nil {
+			return err.Error()
+		} else {
+			return result
+		}
+	*/
 }
 
 func StartCmdService() {
 
 	var address = "127.0.0.1:" + config.GetConfig().CmdServicePort
-	listener, err := net.Listen("tcp", address)
 
+	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatalf("failed to listen: %v", err)
+	}
+	theServer := grpc.NewServer()
+
+	RegisterCmdTaskServer(theServer, &server{})
+
+	reflection.Register(theServer)
+	if err := theServer.Serve(listener); err != nil {
+		logger.Fatalf("failed to serve: %v", err)
 	}
 
-	logger.Info("Starting to listening the incoming command at:", address)
-
-	for {
-		connection, err := listener.Accept()
+	/*
+		var address = "127.0.0.1:" + config.GetConfig().CmdServicePort
+		listener, err := net.Listen("tcp", address)
 
 		if err != nil {
-			logger.Warning(err)
-			continue
+			logger.Fatal(err)
 		}
 
-		go handleInputCmd(connection)
-	}
+		logger.Info("Starting to listening the incoming command at:", address)
+
+		for {
+			connection, err := listener.Accept()
+
+			if err != nil {
+				logger.Warning(err)
+				continue
+			}
+
+			go handleInputCmd(connection)
+		}
+	*/
 }
 
-func handleInputCmd(connection net.Conn) {
+func handleInputCmd(ctx context.Context, req *CmdRequest) (*CmdReply, error) {
 
-	defer connection.Close()
-
-	logger.Info("Received new connection success......")
-
-	cmdStr, err := readFromRPC(connection)
-	if err != nil {
-		logger.Error("Failed to receive command from client")
-		return
-	}
-
-	logger.Info("Read cmd string success:", cmdStr)
-
-	_, err = connection.Write([]byte("success"))
-	if err != nil {
-		logger.Error("Failed to send action result to client")
-		return
-	}
-	logger.Info("Write result back success")
+	return &CmdReply{Message: "Hello " + req.Name}, nil
 }

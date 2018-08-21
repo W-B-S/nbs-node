@@ -20,7 +20,7 @@ option java_outer_classname = "RpcMessage";
 
 package cmdRpc;
 
-service Greeter {
+service CmdTask {
     rpc RpcTask (CmdRequest) returns (CmdReply) {}
 }
 

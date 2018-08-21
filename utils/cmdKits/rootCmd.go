@@ -2,6 +2,7 @@ package cmdKits
 
 import (
 	"fmt"
+	"github.com/W-B-S/nbs-node/utils/cmdKits/cmdRpc"
 	"github.com/W-B-S/nbs-node/utils/nbsLog"
 	"github.com/spf13/cobra"
 	"os"
@@ -110,7 +111,7 @@ func mainRun(cmd *cobra.Command, args []string) {
 
 	logger.Info("root command args:", args)
 
-	StartCmdService()
+	cmdRpc.StartCmdService()
 
 	logger.Info("Nbs daemon is ready......")
 }

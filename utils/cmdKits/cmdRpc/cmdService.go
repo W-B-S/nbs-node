@@ -1,24 +1,13 @@
-package cmdKits
+package cmdRpc
 
 import (
 	"bufio"
 	"github.com/W-B-S/nbs-node/utils/config"
+	"github.com/W-B-S/nbs-node/utils/nbsLog"
 	"net"
-	"os"
-	"syscall"
 )
 
-func IsAddrInUse(err error) bool {
-	e2, ok := err.(*net.OpError)
-	if !ok {
-		return false
-	}
-	e3, ok := e2.Err.(*os.SyscallError)
-	if !ok {
-		return false
-	}
-	return e3.Err == syscall.EADDRINUSE
-}
+var logger = nbsLog.GetInstance()
 
 func readFromRPC(connection net.Conn) (string, error) {
 	return bufio.NewReader(connection).ReadString('\n')
@@ -87,8 +76,6 @@ func handleInputCmd(connection net.Conn) {
 	}
 
 	logger.Info("Read cmd string success:", cmdStr)
-
-	addFileTask(cmdStr)
 
 	_, err = connection.Write([]byte("success"))
 	if err != nil {

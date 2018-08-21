@@ -1,6 +1,7 @@
 package cmdKits
 
 import (
+	"github.com/W-B-S/nbs-node/utils/cmdKits/cmdRpc"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,7 @@ func addFile(cmd *cobra.Command, args []string) {
 
 	logger.Info("add command args:", args)
 
-	DialToCmdService("nbs add nbs.log\n")
+	cmdRpc.DialToCmdService("nbs add nbs.log\n")
 
 	logger.Info("Reading success......")
 

@@ -1,4 +1,4 @@
-package config
+package utils
 
 import (
 	"os"
@@ -19,10 +19,10 @@ const cmdServicePort = "6080"
 const currentVersion = "0.0.1"
 
 var config *Configure
-var once sync.Once
+var onceConf sync.Once
 
 func GetConfig() *Configure {
-	once.Do(func() {
+	onceConf.Do(func() {
 		config = initConfig()
 	})
 
@@ -32,8 +32,11 @@ func GetConfig() *Configure {
 func initConfig() *Configure {
 
 	baseDir := getBaseDir()
-	if !FileExists(baseDir) {
-		createDir(baseDir)
+	if _, ok := FileExists(baseDir); ok == false {
+		err := os.Mkdir(baseDir, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	storageDir := filepath.Join(baseDir, string(filepath.Separator), "database")
@@ -59,23 +62,4 @@ func getBaseDir() string {
 	baseDir := filepath.Join(usr.HomeDir, string(filepath.Separator), ".nbs")
 
 	return baseDir
-}
-
-func FileExists(fileName string) bool {
-
-	fileInfo, err := os.Lstat(fileName)
-
-	if fileInfo != nil || (err != nil && !os.IsNotExist(err)) {
-		return true
-	}
-
-	return false
-}
-
-func createDir(baseDir string) {
-
-	err := os.Mkdir(baseDir, os.ModePerm)
-	if err != nil {
-		panic(err)
-	}
 }

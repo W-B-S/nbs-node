@@ -1,18 +1,17 @@
-package nbsLog
+package utils
 
 import (
-	"github.com/W-B-S/nbs-node/utils/config"
 	"github.com/op/go-logging"
 	"os"
 	"sync"
 )
 
 var instance *logging.Logger
-var once sync.Once
+var onceLog sync.Once
 
-func GetInstance() *logging.Logger {
+func GetLogInstance() *logging.Logger {
 
-	once.Do(func() {
+	onceLog.Do(func() {
 
 		instance = newLogIns()
 	})
@@ -24,7 +23,7 @@ func newLogIns() *logging.Logger {
 
 	log := logging.MustGetLogger("NBS")
 
-	logFile, err := os.OpenFile(config.GetConfig().LogFileName,
+	logFile, err := os.OpenFile(GetConfig().LogFileName,
 		os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 
 	if err != nil {
@@ -64,7 +63,7 @@ func SetLevel(level logging.Level, module string) {
 
 func Test() {
 
-	log := GetInstance()
+	log := GetLogInstance()
 
 	log.Debugf("debug %s", Password("secret"))
 	log.Info("info")
